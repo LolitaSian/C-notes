@@ -215,3 +215,4 @@ int *a = (int *) malloc(n * sizeof(int));
 同一优先级的运算符，运算次序由结合方向所决定。
 **简单记就是：** ！ > 算术运算符 > 关系运算符 > && > || > 赋值运算符
 详细戳：[C语言优先级百度百科](https://baike.baidu.com/item/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7/4752611?fr=aladdin)。
+
