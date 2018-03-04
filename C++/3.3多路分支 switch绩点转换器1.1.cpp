@@ -16,7 +16,7 @@
 		case 13:n=2.5;break;
 		case 12:n=2;break;
 
-		default :
+		default ://不符合case的剩下的情况 
 		n=1; break;
 	 } 
 	 cout<<n;
