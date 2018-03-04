@@ -30,7 +30,7 @@ C++的代码和pdf | C语言的一些补充
 **print 格式修饰符 ：%h数据类型**
 例如int num，占5字符，右对齐。
 > print("%5d",num); 5代表数据占据的最小列宽。h为正数右对齐，左边补空格，h为负数，左对齐，右边补空格。
-**在C++中** 则使用cout<<stew(5)<<num;
+**在C++中** 则使用cout<<stew(5)<<num;（需要iomanip）头文件
 
 ```
 #include <stdio.h>
