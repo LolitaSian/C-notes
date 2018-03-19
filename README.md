@@ -397,11 +397,11 @@ int (*max)(int a,int b)
 }
 ```
 （五）动态数组
-```
+
 语言 |  C | C++
 --- | --- | ---
  声明方式 | int *p=(int *)malloc(sizeof(int)*n); 　　|　C++中用int  *p=new int [n]
  释放方式 | free(p);  　　|　delete p;
-```
+
 　　C语言中声明语句的意思是申请一个int类型的动态数组，sizeof(int)\*n的意思是一个数组元素所占字节大小为一个int型大小，一共有n个数组元素，就是sizeof(int)\*n。free(p)是动态申请的空间，使用完要释放掉。
 　　**例如**：n=10，你要建立数组a[n]， 就写为int \*a=(int \*)malloc(sizeof(int)\*n)，然后建立出来的数组就是a[10]。
