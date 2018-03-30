@@ -1,26 +1,349 @@
-### 构造函数的调用
+# 0.0 demo
+### 1.构造函数的调用
 ```
-class A{
-	A(){};
-};
-```
-①`A a`②`A arr[3]`③`A *p=new A [3]`都会调用构造函数，但是`A *n`不会调用构造函数。
-
-***
-以下代码段：
-```
-class A{
-	A(){};
-	A(int a){};
-	A(A &a){};
-};
-int mian()
+#include<iostream>
+using namespace std;
+class A
 {
-	A arr1[3]={1,2}; 
-	//arr1[0]和arr1[1]调用第二个构造函数；arr1[2]调用无参构造函数
-	A *arr2=new A[3]; 
-	//三项均调用无参构造函数，因为已经动态分配了空间
-	A *arr3[3]={new A(),NULL,new A()}; 
-	//只是创立三个空指针，所以只有arr[0]和arr[2]调用两次构造函数
-}
+	int a;
+	public :
+		A() //无参构造函数 
+		{
+			cout<<"调用无参构造函数"<<endl; 
+			a=0;
+		}
+		A(int n)  //有参构造函数 
+		{
+			cout<<"调用有参构造函数"<<endl; 
+		}
+};
+int main()
+{
+	cout<<endl<<"demo1"<<endl;
+	A demo1;
+	cout<<endl<<"demo2"<<endl;
+	A demo2(5);
+	cout<<endl<<"demo3"<<endl;
+	A demo3[3];
+	cout<<endl<<"demo4"<<endl;
+	A *demo4=new A[3];
+	cout<<endl<<"demo5"<<endl;
+	A *demo5[5]={new A(),NULL,new A(2)};
+	return 0;
+} 
 ```
+输出：
+
+> demo1
+调用无参构造函数
+demo2
+调用有参构造函数
+demo3
+调用无参构造函数
+调用无参构造函数
+调用无参构造函数
+demo4
+调用无参构造函数
+调用无参构造函数
+调用无参构造函数
+demo5
+调用无参构造函数
+调用有参构造函数
+
+　　demo4和demo5的区别在于，demo4已经通过new分配了空间，而demo5只是建立了五个指针，然后逐一进行分配。
+
+### 2.复制构造函数
+　　2.1如果没有定义复制构造函数，那么编译器生成默认复制构造函数。默认的复制构造函数完成复制功能。 
+```
+#include<iostream>
+using namespace std;
+class A
+{
+	public :
+		int a;
+		A() //无参构造函数 
+		{
+			cout<<"调用无参构造函数"<<endl; 
+			a=111;
+		}
+		void set(int n)
+		{
+			a=222;
+		}
+};
+int main()
+{
+	A demo1;
+	A demo2(demo1); 
+	cout<<demo1.a<<endl;
+	cout<<demo2.a<<endl;
+	return 0;
+} 
+```
+输出：
+> 调用无参构造函数
+111
+111
+
+　　
+　　2.2如果定义的自己的复制构造函数，则默认的复制构造函数不存在。
+　　
+```
+#include<iostream>
+using namespace std;
+class A
+{
+	public :
+		int a;
+		A() 
+		{
+			cout<<"调用无参构造函数"<<endl; 
+			a=111;
+		}
+		void set(int n)
+		{
+			a=222;
+		}
+		A(A &x)  //或者写A(const A &a) 
+		{
+			a=x.a; 
+			cout<<"调用复制构造函数"<<endl; 
+		}
+};
+int main()
+{
+	A demo1;
+	A demo2(demo1); //或者A demo2=demo1;//初始化语句，非赋值语句 
+	cout<<demo1.a<<endl;
+	cout<<demo2.a<<endl;
+	return 0;
+} 
+```
+输出：
+> 调用无参构造函数
+调用复制构造函数
+111
+111
+
+　　2.3复制构造函数调用的时机
+　　① 当用一个对象去初始化同类的另一个对象时。 
+　　　`A demo2=demo1;`或者`A demo2(demo1)`
+```
+#include<iostream>
+using namespace std;
+class A  
+{
+public:
+	int v;
+	A() { cout<<"生成"<<endl; v=111; };
+	A( A &a) 
+	{
+		cout << "Copy constructor" <<endl;
+	}   
+}; 
+int main() 
+{
+	cout<<"demo1";
+	A demo1;
+	cout<<"demo2";
+	A demo2(demo1);
+	cout<<"dmeo3";
+	A demo3=demo1;//注意比较demo3和demo4是不同的
+	cout<<"demo4";
+	A demo4;
+	demo4=demo1;
+	return 0; 
+}
+/*
+输出：
+demo1生成
+demo2Copy constructor
+dmeo3Copy constructor
+demo4生成
+*/
+```
+　　② 如果某函数有一个参数是类A 的对象，那么该函数被调用时，类A的复制构造函数将被调用。 
+```
+#include<iostream>
+using namespace std;
+class A  
+{
+	public:
+		A(){ cout<<"construct A"<<endl;}
+		A(A &a) {cout << "Copy constructor" <<endl;}   
+}; 
+void F(A a){ }
+int main()
+{
+	A demo;
+	F (demo); 
+	return 0;
+} 
+/*输出：
+construct A
+Copy constructor*/
+```
+　　③ 如果函数的返回值是类A的对象时，则函数返回时， A的复制构造函数被调用。
+```
+#include<iostream>
+using namespace std;
+class A  
+{
+    public:
+	    int v;
+	    A(int n) { v = n; };
+		A( const A & a) 
+		{
+			v = a.v;
+			cout << "Copy constructor called" <<endl;
+		}   
+}; 
+A Func() 
+{
+	A b(4);
+	return b;
+} 
+int main() 
+{
+	cout << Func().v << endl;
+	return 0; 
+}
+/*在VS中输出：
+Copy constructor called 
+4 
+但是dev c++只输出4，编译器问题。*/
+```
+　　<font color="red">补充：</font>说明dev出于优化目的 并未生成返回值临时对 象。VS无此问题 
+
+### 3.常量引用参数的使用 
+`void fun(CMyclass obj_ ) {  cout << "fun" << endl; } `
+　　这样的函数，调用时生成形参会引发复制构造函数调用，开销比较大。所以可以考虑使用 `CMyclass & `引用类型作为参数。如果希望确保实参的值在函数中不应被改变，那么可以加上`const` 
+```
+void fun(const  CMyclass & obj) 
+{     //函数中任何试图改变 obj值的语句都将是变成非法    } 
+```
+
+### 4.类型转换构造函数
+　　**只有一个参数** ，而且不是复制构造函数的构造函数，一般就可以看作是转换构造函数。当需要的时候，编译系统会自动调用转换构造函数，建立一个无名的临时对象(或临时变量)。 
+```
+#include <iostream>
+using namespace std;
+class Complex   
+{
+	public:
+		double  real, imag;
+		Complex( int i)  
+		{//类型转换构造函数      
+			cout << "IntConstructor called" << endl;     
+			real = i; imag = 0;      
+		}
+		Complex(double r,double i) 
+		{
+			cout << "IntConstructor called" << endl;   
+			real = r; imag = i;  
+		} 
+}; 
+int main () 
+{
+	Complex  c1(7,8);  
+	cout << c1.real << "," << c1.imag << endl;     
+	c1 = 9; // 9被自动转换成一个临时Complex对象    
+	cout << c1.real << "," << c1.imag << endl;  
+	Complex c2(12);
+	cout << c2.real << "," << c2.imag << endl;     
+	Complex c3=13;
+	cout << c3.real << "," << c3.imag << endl;  
+	return 0; 
+} 
+```
+输出：
+> IntConstructor called
+7,8
+IntConstructor called //只是建立一个临时的
+9,0
+IntConstructor called
+12,0
+IntConstructor called
+13,0
+
+### 5.析构函数
+　　5.1名字与类名相同，在前面加‘~’， 没有参数和返回值，一 个类最多只能有一个析构函数。析构函数对象消亡时即自动被调用。可以定义析构函数来在 对象消亡前做善后工作，比如释放分配的空间等。如果定义类时没写析构函数，则编译器生成缺省析构函数。缺省析构函数什么也不做。 
+　　5.2析构函数和运算符delete
+　　delete 运算导致析构函数调用。
+```
+#include <iostream>
+using namespace std;
+class Complex   
+{
+	public:
+		double  imag;
+		Complex()  
+		{ 
+			cout << "Construct" << endl;     
+			imag = 0;      
+		}
+		~Complex(){cout<<"Destory"<<endl;}
+}; 
+int main () 
+{
+	Complex  * m= new Complex;  //构造函数调用 
+	delete m;          //析构函数调用 
+	Complex *n= new Complex[3]; //构造函数调用3次 
+	delete [] n;           //析构函数调用3次
+	return 0; 
+}  
+```
+输出：
+> Construct
+Destory
+Construct
+Construct
+Construct
+Destory
+Destory
+Destory
+
+　　**注意**：若new一个对象数组，那么用delete释放时应该写 []。否则只delete一个对象(调用一次析构函数) 。
+　　5.3析构函数的调用 
+```
+#include <iostream>
+using namespace std;
+class Complex   
+{
+	public:
+		double  imag;
+		Complex()  { cout << "Construct" << endl;     imag = 0;      }
+		Complex(Complex &mid){cout<<"Copy"<<endl;}
+		~Complex(){cout<<"Destory"<<endl;}
+};
+
+Complex  demo;
+
+Complex F()
+{
+	cout<<"函数返回值"<<endl;
+	return demo;
+}
+void E(Complex a)
+{
+	cout<<"函数参数"<<endl;
+} 
+int main () 
+{
+	F();
+	E(demo);
+	Complex m;
+	return 0; 
+} 
+```
+输出：
+> Construct //全局变量建立
+函数返回值 //F
+Copy //F
+Destory //F
+Copy //E
+函数参数 //E
+Destory //E
+Construct //main
+Destory //main
+Destory //全局变量
